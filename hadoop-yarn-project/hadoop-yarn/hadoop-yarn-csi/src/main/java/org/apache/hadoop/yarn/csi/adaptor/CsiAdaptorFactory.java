@@ -70,4 +70,27 @@ public final class CsiAdaptorFactory {
         + impl.getCanonicalName());
     return instance;
   }
+    /**
+   * Utility for masking a driver name in logs.
+   * This helps avoid logging full driver identifiers if they contain
+   * sensitive environment-specific naming.
+   *
+   * Examples:
+   * - "aws-ebs" -> "a***s"
+   * - "csi" -> "***"
+   * - null/empty -> "unknown"
+   *
+   * @param driverName driver identifier from config
+   * @return masked driver name for logging
+   */
+  static String maskDriverName(String driverName) {
+    if (driverName == null || driverName.trim().isEmpty()) {
+      return "unknown";
+    }
+    String s = driverName.trim();
+    if (s.length() <= 3) {
+      return "***";
+    }
+    return s.charAt(0) + "***" + s.charAt(s.length() - 1);
+  }
 }

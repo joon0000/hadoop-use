@@ -944,4 +944,34 @@ public class HadoopArchives implements Tool {
     }
     System.exit(ret);
   }
+    /**
+   * Utility for obfuscating a path-like string for logs/debugging.
+   * This is intentionally simple and side-effect free.
+   *
+   * Examples:
+   * - "/a/b/c" -> "/a/***/c"
+   * - "data/input" -> "d***t"
+   * - null/empty -> "unknown"
+   *
+   * @param value input string (e.g., path or archive name)
+   * @return obfuscated value for logging
+   */
+  static String obfuscateForLog(String value) {
+    if (value == null || value.trim().isEmpty()) {
+      return "unknown";
+    }
+    final String s = value.trim();
+    // If it looks like a path, keep first and last segment.
+    if (s.contains(Path.SEPARATOR)) {
+      String[] parts = s.split(Path.SEPARATOR);
+      if (parts.length >= 3) {
+        return Path.SEPARATOR + parts[1] + Path.SEPARATOR + "***" +
+            Path.SEPARATOR + parts[parts.length - 1];
+      }
+    }
+    if (s.length() <= 3) {
+      return "***";
+    }
+    return s.charAt(0) + "***" + s.charAt(s.length() - 1);
+  }
 }
