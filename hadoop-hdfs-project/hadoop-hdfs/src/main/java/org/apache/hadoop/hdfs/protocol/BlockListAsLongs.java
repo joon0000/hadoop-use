@@ -198,6 +198,26 @@ public abstract class BlockListAsLongs implements Iterable<BlockReportReplica> {
    * @return - the number of blocks
    */
   abstract public int getNumberOfBlocks();
+  /**
+   * The number of FINALIZED replicas in this report.
+   * Convenience method for metrics/debugging.
+   */
+  public int getNumberOfFinalizedBlocks() {
+    int n = 0;
+    for (BlockReportReplica replica : this) {
+      if (replica.getState() == ReplicaState.FINALIZED) {
+        n++;
+      }
+    }
+    return n;
+  }
+
+  /**
+   * The number of under-construction (non-FINALIZED) replicas.
+   */
+  public int getNumberOfUnderConstructionBlocks() {
+    return getNumberOfBlocks() - getNumberOfFinalizedBlocks();
+  }
 
   /**
    * Very efficient encoding of the block report into a ByteString to avoid
